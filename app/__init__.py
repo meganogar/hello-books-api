@@ -29,4 +29,7 @@ def create_app(test_config=None):
     from .routes import hagantine_library
     app.register_blueprint(hagantine_library)
 
+    from .routes import hagantine_authors
+    app.register_blueprint(hagantine_authors)
+
     return app

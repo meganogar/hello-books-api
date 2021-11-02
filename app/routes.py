@@ -1,8 +1,10 @@
 from app import db
 from app.models.book import Book
+from app.models.author import Author
 from flask import Blueprint, jsonify, make_response, request
 
 hagantine_library = Blueprint("hagantine", __name__, url_prefix="/books")
+hagantine_authors = Blueprint("authors", __name__, url_prefix="/authors")
 
 
 # books = [
@@ -72,3 +74,26 @@ def delete_a_book(id):
         return make_response(f"Book #{book.id} was successfully deleted")
     else:
         return make_response(f"Your book id #{id} was not found and could not be deleted", 404)
+
+@hagantine_authors.route("", methods=["GET"])
+def get_all_authors():
+    authors = Author.query.all()
+    authors_list = []
+
+    for each_author in authors:
+        authors_list.append({
+            "author id": each_author.author_id,
+            "name": each_author.name 
+        })
+
+    return make_response(jsonify(authors_list), 200)
+
+@hagantine_authors.route("", methods=["POST"])
+def create_new_author():
+    request_body = request.get_json()
+    if "name" not in request_body:
+        return make_response("Please include author name", 400)
+    else:
+        author = Author(name=request_body["name"])
+        return make_response(f"{author.name} successfully created!", 201)
+
